@@ -924,24 +924,9 @@ interface DividendPayingTokenInterface {
 
 contract SharedConstants {
     address public constant BURN_ADDRESS = 0x000000000000000000000000000000000000dEaD;
-    address public constant CAKE = 0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7; // Mainnet Cake address - 0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82 - CHANGEME
+    address public constant CAKE = 0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82;
     uint8 public constant BUY = 0;
     uint8 public constant SELL = 1;
-    // 0x07865c6E87B9F70255377e024ace6630C1Eaa37F - Ropsten USDC
-    // 0xaD6D458402F60fD3Bd25163575031ACDce07538D - Ropsten DAI
-    // 0x7ef95a0FEE0Dd31b22626fA2e10Ee6A223F8a684 - BSC Testnet USDT
-    // 0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd - BSC Testnet WBNB
-    // 0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7 - Kiemtiem BUSD
-    // 0x01BE23585060835E02B77ef475b0Cc51aA1e0709 - Rinkeby LINK
-    // 0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa - Rinkeby DAI
-    /*event Debug (string debugText, uint256 debugNumber);
-    
-    bool[8] public test;
-    
-    function setTests (bool[] memory _test) external {
-        for (uint i = 0; i < _test.length; i++)
-            test[i] = _test[i];
-    }*/
 }
 
 
@@ -1521,13 +1506,9 @@ contract Dough is ERC20, Ownable, SharedConstants {
 
     constructor() ERC20 ("Dough", "DOUGH") {
         dividendManager = new DividendManager();
-        doughDT = dividendManager.addDividendTracker ("DoughDividendTracker", "DoughDT", address(this), 150, 100_000 * 10**18, 5, 5); //CHANGEME Claimwait
-        dividendManager.addDividendTracker ("CakeDividendTracker", "CakeDT", CAKE, 150, 100_000 * 10**18, 5, 5); //CHANGEME Claimwait
+        doughDT = dividendManager.addDividendTracker ("DoughDividendTracker", "DoughDT", address(this), 3600, 100_000 * 10**18, 5, 5);
+        dividendManager.addDividendTracker ("CakeDividendTracker", "CakeDT", CAKE, 3600, 100_000 * 10**18, 5, 5);
         transactionBuffer.initialise (20);
-
-        //0x10ED43C718714eb63d5aA57B78B54704E256024E <-- Mainnet PCS address
-        //0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3 <-- Testnet kiemtienonline PCS address - CHANGEME
-        //0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D <-- Eth testnets Uniswap 
         IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(0x10ED43C718714eb63d5aA57B78B54704E256024E); 
         // Create a uniswap pair for this new token
         address _uniswapV2Pair = IUniswapV2Factory(_uniswapV2Router.factory()).createPair(address(this), _uniswapV2Router.WETH());
@@ -1808,7 +1789,7 @@ contract Dough is ERC20, Ownable, SharedConstants {
         uint8 feeType = SELL;
         
         if (automatedMarketMakerPairs[to] && from != owner()) {
-            if (from != address(this)) //CHANGEME may need to add this if skewed too far towards sell
+            if (from != address(this))
                 transactionBuffer.append (amount, SELL);
             
             if (!isExcludedFromFees[from])
